@@ -4,19 +4,19 @@
 import PackageDescription
 
 let package = Package(
-    name: "mindbox_common",
+    name: "MindboxCommon",
     platforms: [.iOS(.v12)],
     products: [
         .library(
-            name: "mindbox_common",
-            targets: ["mindbox_common"]
+            name: "MindboxCommon",
+            targets: ["MindboxCommon"]
         ),
     ],
     dependencies: [],
     targets: [
         .binaryTarget(
-            name: "mindbox_common",
-            url: "https://github.com/mindbox-cloud/kmp-common-sdk/releases/download/1.0.0/mindbox_common.xcframework.zip",
-            checksum:"ea10bc7a03daf8599ee1d37392914124f043e3384fc472d323804ad368f5939f"),
+            name: "MindboxCommon",
+            url: "https://github.com/mindbox-cloud/kmp-common-sdk/releases/download/1.0.3-rc/MindboxCommon.xcframework.zip",
+            checksum:"422dad4454addc735ea7469286dea5a828ee114c392b008af69188952ea004f4"),
     ]
 )
