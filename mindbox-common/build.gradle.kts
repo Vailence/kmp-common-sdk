@@ -37,7 +37,7 @@ kotlin {
         it.binaries.framework {
             baseName = xcFrameworkName
             xcf.add(this)
-            isStatic = true
+            isStatic = false
             freeCompilerArgs += "-g"
         }
     }

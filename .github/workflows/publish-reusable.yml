@@ -6,14 +6,18 @@ on:
       branch:
         required: true
         type: string
+  push:
+    tags:
+      - '*'
  
 jobs:
   checks:
+    if: ${{ github.event_name == 'workflow_call' }}
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.branch }}
+          ref: ${{ inputs.branch || github.ref_name }}
           fetch-depth: 2
       - name: Set up JDK 17
         uses: actions/setup-java@v3
@@ -38,30 +42,49 @@ jobs:
       - name: build project
         run: ./gradlew --no-daemon assemble
 
+  check-sdk-version:
+    name: Check SDK Version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch || github.ref_name }}
+      - name: Extract and print SDK version
+        run: |
+          SDK_VERSION=$(grep '^KMP_SDK_VERSION_NAME=' gradle.properties | cut -d '=' -f2)
+          if [ -z "$SDK_VERSION" ]; then
+            echo "KMP_SDK_VERSION_NAME is empty" >&2
+            exit 1
+          fi
+          echo "SDK version: $SDK_VERSION"
+
   set-tag:
+    if: ${{ github.event_name == 'workflow_call' }}
     needs: [checks]
     runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.extract_version.outputs.SDK_VERSION }}
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.branch }}
       - name: Extract SDK version
+        id: extract_version
         run: |
             SDK_VERSION=$(grep '^KMP_SDK_VERSION_NAME=' gradle.properties | cut -d '=' -f2)
             echo "SDK_VERSION=$SDK_VERSION" >> $GITHUB_ENV
+            echo "SDK_VERSION=$SDK_VERSION" >> $GITHUB_OUTPUT
             echo "Extracted Common SDK version: $SDK_VERSION"
-      - name: Create tag
-        run: |
-            git tag ${{ env.SDK_VERSION }}
-            git push origin ${{ env.SDK_VERSION }}
+      # Tag will be created later after updating Package.swift
 
   publish:
+    if: ${{ github.event_name == 'workflow_call' }}
     needs: [set-tag]
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.branch }}
+          ref: ${{ inputs.branch || github.ref_name }}
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
@@ -96,14 +119,50 @@ jobs:
           fi
 
   release-github:
-    needs: [publish]
-    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_call' }}
+    needs: [publish, set-tag, check-sdk-version]
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.branch }}
+          ref: ${{ inputs.branch || github.ref_name }}
+      - name: Build XCFramework
+        run: ./make-ios-framework.sh
+      - name: Update Package.swift with URL and checksum
+        run: |
+          VERSION=${{ needs.set-tag.outputs.tag }}
+          ZIP_PATH="mindbox-common/build/XCFrameworks/release/MindboxCommon.xcframework.zip"
+          CHECKSUM=$(swift package compute-checksum "$ZIP_PATH")
+          echo "Computed checksum: $CHECKSUM"
+          sed -i '' -E "s#(url: \"").*(MindboxCommon.xcframework.zip)(\",)#\\1https://github.com/mindbox-cloud/kmp-common-sdk/releases/download/${VERSION}/MindboxCommon.xcframework.zip\\3#g" Package.swift
+          sed -i '' -E "s#(checksum:\")[^"]*(\")#\\1${CHECKSUM}\\2#g" Package.swift
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Package.swift
+          git commit -m "chore(spm): update Package.swift for ${VERSION}"
+          git push origin HEAD:${{ inputs.branch }}
+      - name: Create and push tag
+        run: |
+          VERSION=${{ needs.set-tag.outputs.tag }}
+          git tag ${VERSION}
+          git push origin ${VERSION}
       - name: Github Release generation
         run: ./.github/git-release-ci.sh
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Mark release as draft if configured
+        if: ${{ vars.SPM_DRAFT_RELEASE == 'true' }}
+        run: |
+          gh release edit ${{ needs.set-tag.outputs.tag }} --draft
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Verify framework existence
+        run: ls -R mindbox-common/build/XCFrameworks/release
+      - name: Upload XCFramework to release
+        run: |
+          gh release upload ${{ needs.set-tag.outputs.tag }} \
+          mindbox-common/build/XCFrameworks/release/MindboxCommon.xcframework.zip \
+          --clobber
         env:
           GH_TOKEN: ${{ github.token }}
 
