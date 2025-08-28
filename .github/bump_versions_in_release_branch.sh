@@ -33,6 +33,10 @@ properties_file="gradle.properties"
 current_version=$(grep -E '^KMP_SDK_VERSION_NAME=' gradle.properties | cut -d'=' -f2)
 sed -i "s/^KMP_SDK_VERSION_NAME=.*/KMP_SDK_VERSION_NAME=$version/" $properties_file
 
+# Replace the current version with the new version in the Package.swift file
+sed -i '' -E 's#(url: ")[^"]*(MindboxCommon\.xcframework\.zip)(",)#\1https://github.com/mindbox-cloud/kmp-common-sdk/releases/download/'"$VERSION"'/MindboxCommon.xcframework.zip\3#g' Package.swift
+
+
 echo "Bump Common SDK version from $current_version to $version."
 
 git add $properties_file
