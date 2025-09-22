@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-version=$(grep '^KMP_SDK_VERSION_NAME=' gradle.properties | cut -d '=' -f2)
+version=$(awk -F '"' '/val kmpSdkVersionName: String/ { print $2; exit }' mindbox-common/build.gradle.kts)
 
 is_beta=false
 if [[ $version == *"rc"* ]]; then

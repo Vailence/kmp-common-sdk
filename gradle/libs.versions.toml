@@ -1,9 +1,10 @@
 [versions]
-agp = "8.2.0"
+agp = "8.9.1"
 kotlin = "1.9.22"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
 
 [plugins]
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
