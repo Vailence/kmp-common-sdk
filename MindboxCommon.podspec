@@ -1,0 +1,13 @@
+Pod::Spec.new do |s|
+    s.name         = 'MindboxCommon'
+    s.version      = '1.0.4'
+    s.summary      = 'Mindbox KMP Common framework (Local)'
+    s.homepage     = 'https://github.com/mindbox-cloud/kmp-common-sdk'
+    s.license      = { :type => "CC BY-NC-ND 4.0", :text => "See LICENSE.md in the repository: https://github.com/mindbox-cloud/kmp-common-sdk" }
+    s.author       = { "Mindbox" => "ios-sdk@mindbox.ru" }
+    
+    s.source       = { :http => '' }
+    
+    s.platform     = :ios, '12.0'
+    s.vendored_frameworks = 'mindbox-common/build/XCFrameworks/release/MindboxCommon.xcframework'
+  end
