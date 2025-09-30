@@ -16,6 +16,7 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "MindboxCommon",
-            url: "https://github.com/mindbox-cloud/kmp-common-sdk/releases/download/1.0.4/MindboxCommon.xcframework.zip"
+            path: "mindbox-common/build/XCFrameworks/release/MindboxCommon.xcframework"
+        )
     ]
 )
