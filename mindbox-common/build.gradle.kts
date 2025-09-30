@@ -46,10 +46,11 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(kotlin("stdlib"))
+            implementation(libs.kotlin.stdlib)
         }
         commonTest.dependencies {
-            implementation(kotlin("test"))
+            implementation(libs.kotlin.test)
+            implementation(libs.kotlinx.coroutines.test)
         }
     }
 }

@@ -3,7 +3,6 @@ package cloud.mindbox.mobile_sdk.utils
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.nanoseconds
 
-
 public object MindboxUtils {
     public object Stopwatch {
 
@@ -17,7 +16,7 @@ public object MindboxUtils {
          * Start tracking duration with tag
          */
         public fun start(tag: String) {
-            entries[tag] = System.nanoTime()
+            entries[tag] = getSystemNanoTime()
         }
 
         /***
@@ -37,9 +36,8 @@ public object MindboxUtils {
          */
         public fun track(tag: String): Duration? =
             entries[tag]?.let { start ->
-                val now = System.nanoTime()
+                val now = getSystemNanoTime()
                 (now - start).nanoseconds
             }
     }
 }
-
