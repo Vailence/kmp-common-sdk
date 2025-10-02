@@ -13,9 +13,8 @@ plugins {
 }
 
 group = "cloud.mindbox"
-val kmpSdkVersionName: String = "1.0.4"
-version = kmpSdkVersionName
-println("KMP_SDK_VERSION_NAME: $version")
+version = providers.gradleProperty("SDK_VERSION_NAME").get()
+println("mindbox-common version: $version")
 
 kotlin {
     androidTarget {
@@ -26,7 +25,7 @@ kotlin {
                 }
             }
         }
-        publishLibraryVariants("release", "debug")
+        publishLibraryVariants("release")
     }
 
     val xcFrameworkName = "MindboxCommon"
@@ -49,7 +48,7 @@ kotlin {
             implementation(libs.kotlin.stdlib)
         }
         commonTest.dependencies {
-            implementation(libs.kotlin.test)
+            implementation(kotlin("test"))
             implementation(libs.kotlinx.coroutines.test)
         }
     }
