@@ -93,7 +93,7 @@ ktlint {
 }
 
 mavenPublishing {
-    publishToMavenCentral()
+    publishToMavenCentral("CENTRAL_PORTAL")
 
     if (System.getenv("CI") == "true") {
         signAllPublications()
