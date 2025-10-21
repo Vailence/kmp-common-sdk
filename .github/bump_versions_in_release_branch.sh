@@ -30,17 +30,23 @@ ls -l
 
 # Add changelog to the index and create a commit
 properties_file="gradle.properties"
-current_version=$(grep -E '^KMP_SDK_VERSION_NAME=' gradle.properties | cut -d'=' -f2)
-sed -i "s/^KMP_SDK_VERSION_NAME=.*/KMP_SDK_VERSION_NAME=$version/" $properties_file
 
-# Replace the current version with the new version in the Package.swift file
-sed -i '' -E 's#(url: ")[^"]*(MindboxCommon\.xcframework\.zip)(",)#\1https://github.com/mindbox-cloud/kmp-common-sdk/releases/download/'"$VERSION"'/MindboxCommon.xcframework.zip\3#g' Package.swift
+# --- Извлечение текущей версии ---
+current_version=$(grep -E '^SDK_VERSION_NAME=' "$properties_file" | cut -d'=' -f2)
+echo "Current SDK_VERSION_NAME: ${current_version:-<empty>}"
 
+# --- Обновление версии ---
+echo "Updating SDK_VERSION_NAME to $version"
+sed -i '' "s/^SDK_VERSION_NAME=.*/SDK_VERSION_NAME=$version/" "$properties_file"
 
-echo "Bump Common SDK version from $current_version to $version."
+echo "Updated line:"
+grep "^SDK_VERSION_NAME=" "$properties_file"
+echo "✅ gradle.properties updated and pushed successfully to $current_branch"
 
-git add $properties_file
-git commit -m "Bump Common SDK version to $version"
+#git add $properties_file
+#git commit -m "Bump Common SDK version to $version"
+
+echo "Bump Common SDK version to $version"
 
 echo "Pushing changes to branch: $current_branch"
 if ! git push origin $current_branch; then
