@@ -109,7 +109,7 @@ jobs:
       - name: Validate sdkVersion
         run: |
           EXPECT="${{ github.event.inputs.release_version }}"
-          SDK_VERSION=$(grep -E '^KMP_SDK_VERSION_NAME=' gradle.properties | cut -d'=' -f2)
+          SDK_VERSION=$(grep -E '^SDK_VERSION_NAME=' gradle.properties | cut -d'=' -f2)
           echo "→ Found in code: $SDK_VERSION, expected: $EXPECT"
           if [ "$SDK_VERSION" != "$EXPECT" ]; then
             echo "❌ SDK version does not match!"
