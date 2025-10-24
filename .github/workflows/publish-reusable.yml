@@ -42,7 +42,7 @@ jobs:
     needs: [checks]
     runs-on: ubuntu-latest
     outputs:
-      tag: ${{ steps.extract.outputs.SDK_VERSION }}
+      tag: ${{ steps.extract_version.outputs.SDK_VERSION }}
     steps:
       - uses: actions/checkout@v4
         with:
