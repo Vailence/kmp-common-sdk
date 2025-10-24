@@ -41,10 +41,10 @@ sed -i '' "s/^SDK_VERSION_NAME=.*/SDK_VERSION_NAME=$version/" "$properties_file"
 
 echo "Updated line:"
 grep "^SDK_VERSION_NAME=" "$properties_file"
-echo "✅ gradle.properties updated and pushed successfully to $current_branch"
+echo "gradle.properties updated and pushed successfully to $current_branch"
 
-#git add $properties_file
-#git commit -m "Bump Common SDK version to $version"
+git add $properties_file
+git commit -m "Bump Common SDK version to $version"
 
 echo "Bump Common SDK version to $version"
 
