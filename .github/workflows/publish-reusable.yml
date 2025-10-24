@@ -50,7 +50,7 @@ jobs:
       - name: Extract SDK version
         id: extract_version
         run: |
-            SDK_VERSION=$(grep '^KMP_SDK_VERSION_NAME=' gradle.properties | cut -d '=' -f2)
+            SDK_VERSION=$(grep '^SDK_VERSION_NAME=' gradle.properties | cut -d '=' -f2)
             echo "SDK_VERSION=$SDK_VERSION" >> $GITHUB_ENV
             echo "SDK_VERSION=$SDK_VERSION" >> $GITHUB_OUTPUT
             echo "Extracted Common SDK version: $SDK_VERSION"
