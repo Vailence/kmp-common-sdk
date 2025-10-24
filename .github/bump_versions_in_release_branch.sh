@@ -31,13 +31,17 @@ ls -l
 # Add changelog to the index and create a commit
 properties_file="gradle.properties"
 
-# --- Извлечение текущей версии ---
 current_version=$(grep -E '^SDK_VERSION_NAME=' "$properties_file" | cut -d'=' -f2)
 echo "Current SDK_VERSION_NAME: ${current_version:-<empty>}"
 
-# --- Обновление версии ---
 echo "Updating SDK_VERSION_NAME to $version"
-sed -i '' "s/^SDK_VERSION_NAME=.*/SDK_VERSION_NAME=$version/" "$properties_file"
+
+# Кроссплатформенный sed: macOS требует аргумент после -i, Linux — нет
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  sed -i '' "s/^SDK_VERSION_NAME=.*/SDK_VERSION_NAME=$version/" "$properties_file"
+else
+  sed -i "s/^SDK_VERSION_NAME=.*/SDK_VERSION_NAME=$version/" "$properties_file"
+fi
 
 echo "Updated line:"
 grep "^SDK_VERSION_NAME=" "$properties_file"
