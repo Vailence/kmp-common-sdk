@@ -139,3 +139,17 @@ jobs:
 #            curl -X POST "$LOOP_NOTIFICATION_WEBHOOK_URL" \
 #              -H "Content-Type: application/json" \
 #              -d "$MESSAGE"
+
+
+  trigger-repo-b:
+    needs: [release-github]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger workflow in repo B
+        run: |
+          echo "Triggering workflow in repo B..."
+          curl -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.PAT_TOKEN }}" \
+            https://api.github.com/repos/vailence/TempLoggerRepo/dispatches \
+            -d "{\"event_type\": \"download_xcframework\", \"client_payload\": {\"version\": \"${{ needs.set-tag.outputs.tag }}\"}}"
