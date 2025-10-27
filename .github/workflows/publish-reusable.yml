@@ -136,7 +136,7 @@ jobs:
           curl -X POST \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ secrets.PAT_TOKEN }}" \
-            https://api.github.com/repos/vailence/TempLoggerRepo/dispatches \
+            https://api.github.com/repos/vailence/kmp-common-sdk-spm/dispatches \
             -d "{\"event_type\": \"download_xcframework\", \"client_payload\": {\"version\": \"${{ needs.release-github.outputs.tag }}\"}}"
 #  
 #  message-to-loop-if-success:
