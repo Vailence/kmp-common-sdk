@@ -42,7 +42,7 @@ jobs:
     needs: [checks]
     runs-on: ubuntu-latest
     outputs:
-      tag: ${{ steps.extract_version.outputs.SDK_VERSION }}
+      tag: ${{ steps.extract_version.outputs.sdk_version }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -50,14 +50,14 @@ jobs:
       - name: Extract SDK version
         id: extract_version
         run: |
-            SDK_VERSION=$(grep '^SDK_VERSION_NAME=' gradle.properties | cut -d '=' -f2)
-            echo "SDK_VERSION=${SDK_VERSION}" >> $GITHUB_ENV
-            echo "SDK_VERSION=${SDK_VERSION}" >> $GITHUB_OUTPUT
-            echo "Extracted SDK version: ${SDK_VERSION}"
+          SDK_VERSION=$(grep '^SDK_VERSION_NAME=' gradle.properties | cut -d '=' -f2)
+          echo "Extracted SDK version: ${SDK_VERSION}"
+          echo "sdk_version=${SDK_VERSION}" >> $GITHUB_OUTPUT
+          echo "SDK_VERSION=${SDK_VERSION}" >> $GITHUB_ENV
       - name: Create tag
         run: |
-            git tag ${{ env.SDK_VERSION }}
-            git push origin ${{ env.SDK_VERSION }}
+          git tag "${{ env.SDK_VERSION }}"
+          git push origin "${{ env.SDK_VERSION }}"
 #
 #  publish:
 #    needs: [set-tag]
