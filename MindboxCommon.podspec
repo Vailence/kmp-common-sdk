@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
     s.name         = 'MindboxCommon'
-    s.version      = '2.14.5'
+    s.version      = '1.0.3'
     s.summary      = 'Mindbox KMP Common framework (Local)'
     s.homepage     = 'https://github.com/mindbox-cloud/kmp-common-sdk'
     s.license      = { :type => "CC BY-NC-ND 4.0", :text => "See LICENSE.md in the repository: https://github.com/mindbox-cloud/kmp-common-sdk" }
