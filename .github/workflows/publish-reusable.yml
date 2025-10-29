@@ -85,9 +85,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           
-  merge-master-into-develop:
+  merge:
     needs: [release-github]
-    if: ${{ startsWith(inputs.branch, 'release/') }}
+    if: startsWith(github.head_ref, 'release/') && github.base_ref == 'master'
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ github.token }}
@@ -96,28 +96,13 @@ jobs:
         uses: actions/checkout@v5
         with:
           ref: develop
-
-      - name: Create Pull Request master → develop
-        run: |
-          gh pr create \
-            --base develop \
-            --head master \
-            --title "Merge 'master' into 'develop' after release" \
-            --body "Automated Pull Request to merge 'master' into 'develop' after successful release."
-        env:
-          GH_TOKEN: ${{ github.token }}
-
-      - name: Merge created PR automatically
+      - name: Create Pull Request
+        run: gh pr create --base develop --head master --title "Merge 'master' into 'develop' after release" --body "Automated Pull Request to merge 'master' into 'develop' after release"
+      - name: Merge Pull Request
         run: |
           pr_number=$(gh pr list --base develop --head master --json number --jq '.[0].number')
-          if [ -n "$pr_number" ]; then
-            gh pr merge "$pr_number" --merge --auto
-          else
-            echo "No matching PR found. Skipping merge."
-          fi
-        env:
-          GH_TOKEN: ${{ github.token }}
-
+          gh pr merge $pr_number --merge --auto
+          
   trigger-repo-b:
     needs: [release-github]
     runs-on: ubuntu-latest
