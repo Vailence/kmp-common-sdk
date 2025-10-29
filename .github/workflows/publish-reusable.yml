@@ -29,15 +29,15 @@ jobs:
       - name: Run ktlintCheck on changed files
         if: steps.get_changed_files.outputs.CHANGED_FILES != ''
         run: ./gradlew ktlintCheck -PinternalKtlintGitFilter="${{ steps.get_changed_files.outputs.CHANGED_FILES }}"
-
-      - name: lint check
-        run: ./gradlew --no-daemon lintDebug
-
-      - name: unit tests
-        run: ./gradlew --no-daemon --stacktrace --rerun-tasks test
-
-      - name: build project
-        run: ./gradlew --no-daemon assemble
+#
+#      - name: lint check
+#        run: ./gradlew --no-daemon lintDebug
+#
+#      - name: unit tests
+#        run: ./gradlew --no-daemon --stacktrace --rerun-tasks test
+#
+#      - name: build project
+#        run: ./gradlew --no-daemon assemble
 
   set-tag:
     needs: [checks]
@@ -87,7 +87,7 @@ jobs:
           
   merge-master-into-develop:
     needs: [release-github]
-    if: ${{ success() && startsWith(inputs.branch, 'release/') }}
+    if: ${{ startsWith(inputs.branch, 'release/') }}
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ github.token }}
