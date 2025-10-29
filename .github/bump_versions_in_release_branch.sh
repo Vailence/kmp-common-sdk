@@ -59,6 +59,7 @@ else
 fi
 
 # === Commit changes ===
+echo ""
 git commit -m "Bump Common SDK version to $version" || echo "No changes to commit"
 
 # === Validation ===

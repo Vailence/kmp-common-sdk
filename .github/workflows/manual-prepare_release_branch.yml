@@ -1,4 +1,4 @@
-name: "Manual Release Prep: Branch & Version Bump"
+name: "1. Release branch manual preparation"
 
 on:
   workflow_dispatch:
@@ -23,7 +23,7 @@ jobs:
       - name: Check version matches semver or semver-rc
         run: |
           VER="${{ github.event.inputs.release_version }}"
-          echo "→ release_version = $VER"
+          echo "✅ release_version = $VER"
           if ! [[ "$VER" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-rc)?$ ]]; then
             echo "❌ release_version must be X.Y.Z or X.Y.Z-rc"
             exit 1
